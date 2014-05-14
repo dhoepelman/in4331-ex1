@@ -7,7 +7,7 @@ public class Match {
     // I guess Map <PatternNode, List<Match>> was meant, and Guava has a MultiMap that is abstracts Map<P, List<Q>>
     private Multimap<PatternNode, Match> children;
     private TPEStack st;
-    private int start;
+    private int pre;
     private STATUS status;
     private Match parent;
 
@@ -35,12 +35,12 @@ public class Match {
         this.st = st;
     }
 
-    public int getStart() {
-        return start;
+    public int getPre() {
+        return pre;
     }
 
-    public void setStart(int start) {
-        this.start = start;
+    public void setPre(int pre) {
+        this.pre = pre;
     }
 
     public Match getParent() {

@@ -26,12 +26,12 @@ public class StackEval implements ContentHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
-        for (TPEStack s : rootStack.getDescendantStacks()) {
-            if (localName == s.getPatternNode().getName() && s.spar.top().getStatus() == Match.STATUS.OPEN) {
-                Match m = new Match(currentPre, s.spar.top(), s);
+        for (TPEStack stack : rootStack.getDescendantStacks()) {
+            if (localName == stack.getPatternNode().getName() && stack.getParent().top().getStatus() == Match.STATUS.OPEN) {
+                Match m = new Match(currentPre, stack.getParent().top(), stack);
                 // create a match satisfying the ancestor conditions
-                // of query node s.p
-                s.push(m);
+                // of query node stack.p
+                stack.push(m);
                 preOfOpenNodes.push(currentPre);
             }
             currentPre++;
@@ -56,19 +56,19 @@ public class StackEval implements ContentHandler {
         // first, get the pre number of the element that ends now:
         int preOflastOpen = preOfOpenNodes.pop();
         // now look for Match objects having this pre number:
-        for (TPEStack s : rootStack.getDescendantStacks()) {
-            if (s.getPatternNode().getName() == localName && s.top().getStatus() == Match.STATUS.OPEN && s.top().pre == preOfLastOpen) {
+        for (TPEStack stack : rootStack.getDescendantStacks()) {
+            if (stack.getPatternNode().getName() == localName && stack.top().getStatus() == Match.STATUS.OPEN && stack.top().getPre() == preOfLastOpen) {
                 // all descendants of this Match have been traversed by now.
-                Match m = s.pop();
+                Match m = stack.pop();
                 // check if m has child matches for all children
                 // of its pattern node
                 for (pChild:
-                     s.getPatternNode().getChildren()) {
+                     stack.getPatternNode().getChildren()) {
                     // pChild is a child of the query node for which m was created
-                    if (m.children.get(pChild) == null) {
+                    if (m.getChildren().get(pChild) == null) {
                         // m lacks a child Match for the pattern node pChild
                         // we remove m from its Stack, detach it from its parent etc.
-                        remove(m, s);
+                        stack.remove(m);
                     }
                 }
                 m.close();

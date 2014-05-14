@@ -7,7 +7,11 @@ public class TPEStack {
     private PatternNode p;
     // Deque is the java collections version of Stack
     private Deque<Match> matches;
-    private TPEStack spar;
+    /**
+     * Parent stack. Called spar in the book
+     */
+    private TPEStack parentStack;
+
 
     /**
      * Gets the stacks for all descendants of p
@@ -21,7 +25,7 @@ public class TPEStack {
     }
 
     public TPEStack getParent() {
-        return spar;
+        return parentStack;
     }
 
     // gets the stacks for all descendants of p
