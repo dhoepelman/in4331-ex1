@@ -19,7 +19,7 @@ public class Match {
         this.status = status;
     }
 
-    public MultiMap<PatternNode, Match> getChildren() {
+    public Multimap<PatternNode, Match> getChildren() {
         return children;
     }
 
