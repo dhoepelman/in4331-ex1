@@ -1,9 +1,11 @@
 package nl.tudelft.wdm;
 
+import com.google.common.collect.Multimap;
+
 public class Match {
     // Original Map <PatternNode, Array<Match>> children; , but Array isn't a class in Java...
     // I guess Map <PatternNode, List<Match>> was meant, and Guava has a MultiMap that is abstracts Map<P, List<Q>>
-    private MultiMap<PatternNode, Match> children;
+    private Multimap<PatternNode, Match> children;
     private TPEStack st;
     private int start;
     private STATUS status;
