@@ -27,7 +27,7 @@ public class StackEval implements ContentHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         for (TPEStack s : rootStack.getDescendantStacks()) {
-            if (localName == s.p.name && s.spar.top().getStatus() == Match.STATUS.OPEN) {
+            if (localName == s.getPatternNode().getName() && s.spar.top().getStatus() == Match.STATUS.OPEN) {
                 Match m = new Match(currentPre, s.spar.top(), s);
                 // create a match satisfying the ancestor conditions
                 // of query node s.p
@@ -40,7 +40,7 @@ public class StackEval implements ContentHandler {
             // similarly look for query nodes possibly matched
             // by the attributes of the currently started element
             for (TPEStack s : rootStack.getDescendantStacks()) {
-                if (attribute.equals(s.getPatternNode().name) && s.getParent().top().getStatus() == Match.STATUS.OPEN) {
+                if (attribute.equals(s.getPatternNode().getName()) && s.getParent().top().getStatus() == Match.STATUS.OPEN) {
                     Match ma = new Match(currentPre, s.getParent().top(), s);
                     s.push(ma);
                 }
@@ -57,13 +57,13 @@ public class StackEval implements ContentHandler {
         int preOflastOpen = preOfOpenNodes.pop();
         // now look for Match objects having this pre number:
         for (TPEStack s : rootStack.getDescendantStacks()) {
-            if (s.getPatternNode().name == localName && s.top().getStatus() == Match.STATUS.OPEN && s.top().pre == preOfLastOpen) {
+            if (s.getPatternNode().getName() == localName && s.top().getStatus() == Match.STATUS.OPEN && s.top().pre == preOfLastOpen) {
                 // all descendants of this Match have been traversed by now.
                 Match m = s.pop();
                 // check if m has child matches for all children
                 // of its pattern node
                 for (pChild:
-                     s.p.getChildren()) {
+                     s.getPatternNode().getChildren()) {
                     // pChild is a child of the query node for which m was created
                     if (m.children.get(pChild) == null) {
                         // m lacks a child Match for the pattern node pChild
@@ -76,7 +76,7 @@ public class StackEval implements ContentHandler {
         }
     }
 
-    // Methoden van de SAX2 interface onderstaand
+    // Methoden van de SAX2 interface onderstaand, misschien implementeren indien nodig?
 
     @Override
     public void setDocumentLocator(Locator locator) {

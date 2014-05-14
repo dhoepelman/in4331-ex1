@@ -15,8 +15,8 @@ public class Match {
         return status;
     }
 
-    public void setStatus(STATUS status) {
-        this.status = status;
+    public void close() {
+        this.status = STATUS.CLOSED;
     }
 
     public Multimap<PatternNode, Match> getChildren() {
