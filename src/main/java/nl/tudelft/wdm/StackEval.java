@@ -2,11 +2,13 @@ package nl.tudelft.wdm;
 
 import nl.tudelft.wdm.misc.AttributesIterator;
 import org.xml.sax.Attributes;
-import org.xml.sax.DocumentHandler;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXException;
 
 import java.util.Deque;
 
-public class StackEval implements DocumentHandler {
+public class StackEval implements ContentHandler {
     TreePattern q;
 
     /**
@@ -23,7 +25,7 @@ public class StackEval implements DocumentHandler {
     Deque<Integer> preOfOpenNodes;
 
     @Override
-    public void startElement(String localName, Attributes attributes) {
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
         for (TPEStack s : rootStack.getDescendantStacks()) {
             if (localName == s.p.name && s.spar.top().getStatus() == Match.STATUS.OPEN) {
                 Match m = new Match(currentPre, s.spar.top(), s);
@@ -48,7 +50,7 @@ public class StackEval implements DocumentHandler {
     }
 
     @Override
-    public void endElement(String localName) {
+    public void endElement(String uri, String localName, String qName) {
         // we need to find out if the element ending now corresponded
         // to matches in some stacks
         // first, get the pre number of the element that ends now:
@@ -72,5 +74,52 @@ public class StackEval implements DocumentHandler {
                 m.close();
             }
         }
+    }
+
+    // Methoden van de SAX2 interface onderstaand
+
+    @Override
+    public void setDocumentLocator(Locator locator) {
+        // TODO: Implement
+    }
+
+    @Override
+    public void startDocument() throws SAXException {
+        // TODO: Implement
+    }
+
+    @Override
+    public void endDocument() throws SAXException {
+        // TODO: Implement
+    }
+
+    @Override
+    public void startPrefixMapping(String prefix, String uri) throws SAXException {
+        // TODO: Implement
+    }
+
+    @Override
+    public void endPrefixMapping(String prefix) throws SAXException {
+        // TODO: Implement
+    }
+
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        // TODO: Implement
+    }
+
+    @Override
+    public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
+        // TODO: Implement
+    }
+
+    @Override
+    public void processingInstruction(String target, String data) throws SAXException {
+        // TODO: Implement
+    }
+
+    @Override
+    public void skippedEntity(String name) throws SAXException {
+        // TODO: Implement
     }
 }
