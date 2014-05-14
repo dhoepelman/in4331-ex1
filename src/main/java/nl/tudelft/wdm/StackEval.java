@@ -22,7 +22,7 @@ public class StackEval implements ContentHandler {
     /**
      * pre numbers for all elements having started but not ended yet:
      */
-    Deque<Integer> preOfOpenNodes;
+    Deque<Integer> openNodesPreNumbers;
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
@@ -32,7 +32,7 @@ public class StackEval implements ContentHandler {
                 // create a match satisfying the ancestor conditions
                 // of query node stack.p
                 stack.push(m);
-                preOfOpenNodes.push(currentPre);
+                openNodesPreNumbers.push(currentPre);
             }
             currentPre++;
         }
@@ -54,7 +54,7 @@ public class StackEval implements ContentHandler {
         // we need to find out if the element ending now corresponded
         // to matches in some stacks
         // first, get the pre number of the element that ends now:
-        int preOflastOpen = preOfOpenNodes.pop();
+        int preOflastOpen = openNodesPreNumbers.pop();
         // now look for Match objects having this pre number:
         for (TPEStack stack : rootStack.getDescendantStacks()) {
             if (stack.getPatternNode().getName() == localName && stack.top().getStatus() == Match.STATUS.OPEN && stack.top().getPre() == preOfLastOpen) {
