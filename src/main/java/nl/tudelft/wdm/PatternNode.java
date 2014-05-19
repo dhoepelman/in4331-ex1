@@ -42,4 +42,8 @@ public class PatternNode {
     public boolean isRoot() {
         return parent == null;
     }
+
+    public PatternNode getParent() {
+        return parent;
+    }
 }

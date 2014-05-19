@@ -10,9 +10,9 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class StackEval extends DefaultHandler {
-    final PatternNode q;
+    final PatternNode root;
     /**
-     * stack for the root of q
+     * stack for the root of root
      */
     TPEStack rootStack;
     /**
@@ -24,10 +24,11 @@ public class StackEval extends DefaultHandler {
      */
     Deque<Integer> openNodesPreNumbers = new ArrayDeque<>();
     private Match rootMatch;
+    private PatternNode current;
 
-    public StackEval(PatternNode q) {
-        this.q = q;
-        this.rootStack = q.getStack();
+    public StackEval(PatternNode root) {
+        this.root = root;
+        this.rootStack = root.getStack();
     }
 
     public Match getRootMatch() {
@@ -36,30 +37,41 @@ public class StackEval extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
-        for (TPEStack stack : rootStack.getDescendantStacks()) {
-            PatternNode node = stack.getPatternNode();
-            if (qName.equals(node.getName()) && (node.isRoot() || stack.getParent().top().getStatus() == Match.STATUS.OPEN)) {
-                Match m = new Match(currentPre, (node.isRoot() ? null : stack.getParent().top()), stack);
-                if (node.isRoot()) {
-                    rootMatch = m;
-                }
-                // create a match satisfying the ancestor conditions
-                // of query node stack.p
-                stack.push(m);
-                openNodesPreNumbers.push(currentPre);
+        currentPre++;
+        if (qName.equals(root.getName())) {
+            addMatch(qName, root);
+        } else {
+            //for (TPEStack stack : rootStack.getDescendantStacks()) {
+            for (PatternNode node : current.getChildren()) {
+                addMatch(qName, node);
             }
-            currentPre++;
         }
         for (String attribute : new AttributesIterator(attributes)) {
+            currentPre++;
             // similarly look for query nodes possibly matched
-            // by the attributes of the currently started element
-            for (TPEStack s : rootStack.getDescendantStacks()) {
-                if (attribute.equals(s.getPatternNode().getName()) && s.getParent().top().getStatus() == Match.STATUS.OPEN) {
+            //for (TPEStack s : rootStack.getDescendantStacks()) {
+            for (PatternNode node : current.getChildren()) {
+                TPEStack s = node.getStack();
+                if (attribute.equals(node.getName()) && s.getParent().top().getStatus() == Match.STATUS.OPEN) {
                     Match ma = new Match(currentPre, s.getParent().top(), s);
                     s.push(ma);
                 }
             }
-            currentPre++;
+        }
+    }
+
+    private void addMatch(String qName, PatternNode node) {
+        TPEStack stack = node.getStack();
+        if (qName.equals(node.getName()) && (node.isRoot() || stack.getParent().top().getStatus() == Match.STATUS.OPEN)) {
+            current = node;
+            Match m = new Match(currentPre, (node.isRoot() ? null : stack.getParent().top()), stack);
+            if (node.isRoot()) {
+                rootMatch = m;
+            }
+            // create a match satisfying the ancestor conditions
+            // of query node stack.p
+            stack.push(m);
+            openNodesPreNumbers.push(currentPre);
         }
     }
 
@@ -72,25 +84,28 @@ public class StackEval extends DefaultHandler {
             // We have no open elements, ignore this element
             return;
         }
-        int preOfLastOpen = openNodesPreNumbers.pop();
         // now look for Match objects having this pre number:
-        for (TPEStack stack : rootStack.getDescendantStacks()) {
-            if (stack.getPatternNode().getName().equals(qName) && stack.top().getStatus() == Match.STATUS.OPEN && stack.top().getPre() == preOfLastOpen) {
-                // all descendants of this Match have been traversed by now.
-                Match m = stack.pop();
-                // check if m has child matches for all children
-                // of its pattern node
-                for (PatternNode pChild : stack.getPatternNode().getChildren()) {
-                    // pChild is a child of the query node for which m was created
-                    if (m.getChildren().get(pChild) == null) {
-                        // m lacks a child Match for the pattern node pChild
-                        // we remove m from its Stack, detach it from its parent etc.
-                        stack.remove(m);
-                    }
+        //for (TPEStack stack : rootStack.getDescendantStacks()) {
+        //    if (stack.getPatternNode().getName().equals(qName) && stack.top().getStatus() == Match.STATUS.OPEN && stack.top().getPre() == preOfLastOpen) {
+        if (current.getName().equals(qName)) {
+            int preOfLastOpen = openNodesPreNumbers.pop();
+            TPEStack stack = current.getStack();
+            // all descendants of this Match have been traversed by now.
+            Match m = stack.pop();
+            // check if m has child matches for all children
+            // of its pattern node
+            for (PatternNode pChild : current.getChildren()) {
+                // pChild is a child of the query node for which m was created
+                if (m.getChildren().get(pChild) == null) {
+                    // m lacks a child Match for the pattern node pChild
+                    // we remove m from its Stack, detach it from its parent etc.
+                    m.getParent().removeChild(pChild, m);
                 }
-                m.close();
             }
+            m.close();
+            current = current.getParent();
         }
+        //}
     }
 
     // Methoden van de SAX2 interface onderstaand, misschien implementeren indien nodig?

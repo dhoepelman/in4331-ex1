@@ -61,6 +61,33 @@ public class Match {
         this.parent = parent;
     }
 
+    public void removeChild(PatternNode pChild, Match m) {
+        children.remove(pChild, m);
+    }
+
+    public String toString() {
+        return toString(0);
+    }
+
+    private String toString(int tab) {
+        StringBuilder tabsSB = new StringBuilder();
+        for (int i = 0; i < tab; i++) {
+            tabsSB.append("\t");
+        }
+        String tabs = tabsSB.toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%sMatch(%s, %s, %d) {", tabs, getSt().getPatternNode().getName(), getStatus().name(), getPre()));
+        if (children.size() > 0) {
+            sb.append("\n");
+            for (Match m : children.values()) {
+                sb.append(m.toString(tab + 1));
+                sb.append(",\n");
+            }
+        }
+        sb.append("}\n");
+        return sb.toString();
+    }
+
     public enum STATUS {
         OPEN,
         CLOSED

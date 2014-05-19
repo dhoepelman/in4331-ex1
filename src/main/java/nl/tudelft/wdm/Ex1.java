@@ -47,6 +47,6 @@ public class Ex1 {
         }
 
         System.out.println("Completed successfully (niet hopen)");
-        System.out.println(root.getStack());
+        System.out.println(eval.getRootMatch());
     }
 }
