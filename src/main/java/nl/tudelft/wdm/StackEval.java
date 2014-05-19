@@ -2,13 +2,13 @@ package nl.tudelft.wdm;
 
 import nl.tudelft.wdm.misc.AttributesIterator;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.Deque;
 
-public class StackEval implements ContentHandler {
+public class StackEval extends DefaultHandler {
     final PatternNode q;
 
     /**
@@ -32,7 +32,7 @@ public class StackEval implements ContentHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         for (TPEStack stack : rootStack.getDescendantStacks()) {
-            if (localName == stack.getPatternNode().getName() && stack.getParent().top().getStatus() == Match.STATUS.OPEN) {
+            if (localName.equals(stack.getPatternNode().getName()) && stack.getParent().top().getStatus() == Match.STATUS.OPEN) {
                 Match m = new Match(currentPre, stack.getParent().top(), stack);
                 // create a match satisfying the ancestor conditions
                 // of query node stack.p
@@ -62,7 +62,7 @@ public class StackEval implements ContentHandler {
         int preOfLastOpen = openNodesPreNumbers.pop();
         // now look for Match objects having this pre number:
         for (TPEStack stack : rootStack.getDescendantStacks()) {
-            if (stack.getPatternNode().getName() == localName && stack.top().getStatus() == Match.STATUS.OPEN && stack.top().getPre() == preOfLastOpen) {
+            if (stack.getPatternNode().getName().equals(localName) && stack.top().getStatus() == Match.STATUS.OPEN && stack.top().getPre() == preOfLastOpen) {
                 // all descendants of this Match have been traversed by now.
                 Match m = stack.pop();
                 // check if m has child matches for all children
