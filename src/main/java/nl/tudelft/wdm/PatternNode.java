@@ -7,15 +7,19 @@ import java.util.List;
 public class PatternNode {
     private final String name;
     private final List<PatternNode> children = new ArrayList<>();
-    private TPEStack stack;
+    private final TPEStack stack;
+
+    private PatternNode(String name, TPEStack stack) {
+        this.name = name;
+        this.stack = stack;
+    }
 
     public PatternNode(String name) {
-        this.name = name;
+        this(name, new TPEStack());
     }
 
     public PatternNode(String name, PatternNode parent) {
-        this(name);
-        parent.addChild(this);
+        this(name, new TPEStack(parent.getStack()));
     }
 
     public String getName() {
@@ -32,9 +36,5 @@ public class PatternNode {
 
     public TPEStack getStack() {
         return stack;
-    }
-
-    public void setStack(TPEStack stack) {
-        this.stack = stack;
     }
 }
