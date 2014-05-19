@@ -35,14 +35,18 @@ public class Ex1 {
             sax.parse(new File(args[0]), eval);
         } catch (FileNotFoundException e) {
             System.err.println(String.format("File %s doesn't exist", args[0]));
+            return;
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println(String.format("Error when reading file %s", args[0]));
+            return;
         } catch (SAXException e) {
             e.printStackTrace();
             System.err.println("Unhandled SAX exception while reading file.");
+            return;
         }
 
+        System.out.println("Completed successfully (niet hopen)");
         System.out.println(root.getStack());
     }
 }

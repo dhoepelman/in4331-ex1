@@ -16,7 +16,9 @@ public class Match {
         this.pre = pre;
         this.parent = parent;
         this.st = stack;
-        parent.addChild(stack.getParent().getPatternNode(), this);
+        if (parent != null) {
+            parent.addChild(stack.getParent().getPatternNode(), this);
+        }
     }
 
     public STATUS getStatus() {

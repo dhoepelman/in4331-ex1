@@ -11,7 +11,6 @@ import java.util.Deque;
 
 public class StackEval extends DefaultHandler {
     final PatternNode q;
-
     /**
      * stack for the root of q
      */
@@ -24,18 +23,26 @@ public class StackEval extends DefaultHandler {
      * pre numbers for all elements having started but not ended yet:
      */
     Deque<Integer> openNodesPreNumbers = new ArrayDeque<>();
+    private Match rootMatch;
 
     public StackEval(PatternNode q) {
         this.q = q;
         this.rootStack = q.getStack();
     }
 
+    public Match getRootMatch() {
+        return rootMatch;
+    }
+
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         for (TPEStack stack : rootStack.getDescendantStacks()) {
-            if (qName.equals(stack.getPatternNode().getName())
-                    && stack.getParent().top().getStatus() == Match.STATUS.OPEN) {
-                Match m = new Match(currentPre, stack.getParent().top(), stack);
+            PatternNode node = stack.getPatternNode();
+            if (qName.equals(node.getName()) && (node.isRoot() || stack.getParent().top().getStatus() == Match.STATUS.OPEN)) {
+                Match m = new Match(currentPre, (node.isRoot() ? null : stack.getParent().top()), stack);
+                if (node.isRoot()) {
+                    rootMatch = m;
+                }
                 // create a match satisfying the ancestor conditions
                 // of query node stack.p
                 stack.push(m);
