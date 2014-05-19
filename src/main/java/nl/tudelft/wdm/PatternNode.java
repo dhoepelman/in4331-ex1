@@ -30,10 +30,7 @@ public class PatternNode {
 
         PatternNode that = (PatternNode) o;
 
-        if (!name.equals(that.name)) return false;
-        if (parent != null ? !parent.equals(that.parent) : that.parent != null) return false;
-
-        return true;
+        return name.equals(that.name) && !(parent != null ? !parent.equals(that.parent) : that.parent != null);
     }
 
     @Override

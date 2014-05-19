@@ -11,25 +11,20 @@ import java.util.Collection;
 import java.util.Deque;
 
 public class StackEval extends DefaultHandler {
-    final PatternNode root;
-    /**
-     * stack for the root of root
-     */
-    TPEStack rootStack;
-    /**
-     * pre number of the last element which has started:
-     */
-    int currentPre = 0;
+    private final PatternNode root;
     /**
      * pre numbers for all elements having started but not ended yet:
      */
-    Deque<Integer> openNodesPreNumbers = new ArrayDeque<>();
+    private final Deque<Integer> openNodesPreNumbers = new ArrayDeque<>();
+    /**
+     * pre number of the last element which has started:
+     */
+    private int currentPre = 0;
     private Match rootMatch;
     private PatternNode current;
 
     public StackEval(PatternNode root) {
         this.root = root;
-        this.rootStack = root.getStack();
     }
 
     public Match getRootMatch() {

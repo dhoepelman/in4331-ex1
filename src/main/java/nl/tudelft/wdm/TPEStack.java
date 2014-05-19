@@ -8,13 +8,12 @@ import java.util.List;
 public class TPEStack {
     private final PatternNode p;
     // Deque is the java collections version of Stack
-    private Deque<Match> matches = new ArrayDeque<>();
+    private final Deque<Match> matches = new ArrayDeque<>();
+    private final List<TPEStack> children = new ArrayList<>();
     /**
      * Parent stack. Called spar in the book
      */
     private TPEStack parentStack;
-
-    private List<TPEStack> children = new ArrayList<>();
 
     public TPEStack(PatternNode p) {
         this.p = p;
@@ -24,20 +23,6 @@ public class TPEStack {
         this(p);
         parentStack = parent;
         parent.addChild(this);
-    }
-
-    /**
-     * Gets this and all descendant stacks
-     */
-    public List<TPEStack> getDescendantStacks() {
-        List<TPEStack> descStacks = new ArrayList<>();
-        descStacks.add(this);
-        for (TPEStack child : children) {
-            descStacks.add(child);
-            descStacks.addAll(child.getDescendantStacks());
-        }
-
-        return descStacks;
     }
 
     public PatternNode getPatternNode() {
@@ -59,10 +44,6 @@ public class TPEStack {
 
     public Match pop() {
         return matches.pop();
-    }
-
-    public void remove(Match m) {
-        matches.remove(m);
     }
 
     public void addChild(TPEStack child) {

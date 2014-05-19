@@ -6,9 +6,9 @@ import org.xml.sax.Attributes;
 import java.util.Iterator;
 
 public class AttributesIterator implements Iterable<String>, Iterator<String> {
-    final int length;
+    private final int length;
     private final Attributes attributes;
-    int loc = 0;
+    private int loc = 0;
 
     public AttributesIterator(Attributes attributes) {
         this.attributes = attributes;

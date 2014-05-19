@@ -7,10 +7,10 @@ public class Match {
     // Original Map <PatternNode, Array<Match>> children; , but Array isn't a class in Java...
     // I guess Map <PatternNode, List<Match>> was meant, and Guava has a MultiMap that is abstracts Map<P, List<Q>>
     private final Multimap<PatternNode, Match> children = HashMultimap.create();
-    private TPEStack st;
-    private int pre;
+    private final TPEStack st;
+    private final int pre;
+    private final Match parent;
     private STATUS status = STATUS.OPEN;
-    private Match parent;
 
     public Match(int pre, Match parent, TPEStack stack) {
         this.pre = pre;
@@ -41,24 +41,13 @@ public class Match {
         return st;
     }
 
-    public void setSt(TPEStack st) {
-        this.st = st;
-    }
 
     public int getPre() {
         return pre;
     }
 
-    public void setPre(int pre) {
-        this.pre = pre;
-    }
-
     public Match getParent() {
         return parent;
-    }
-
-    public void setParent(Match parent) {
-        this.parent = parent;
     }
 
     public void removeChild(PatternNode pChild, Match m) {
