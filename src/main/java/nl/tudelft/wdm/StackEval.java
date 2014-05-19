@@ -54,7 +54,7 @@ public class StackEval implements ContentHandler {
         // we need to find out if the element ending now corresponded
         // to matches in some stacks
         // first, get the pre number of the element that ends now:
-        int preOflastOpen = openNodesPreNumbers.pop();
+        int preOfLastOpen = openNodesPreNumbers.pop();
         // now look for Match objects having this pre number:
         for (TPEStack stack : rootStack.getDescendantStacks()) {
             if (stack.getPatternNode().getName() == localName && stack.top().getStatus() == Match.STATUS.OPEN && stack.top().getPre() == preOfLastOpen) {
@@ -62,8 +62,7 @@ public class StackEval implements ContentHandler {
                 Match m = stack.pop();
                 // check if m has child matches for all children
                 // of its pattern node
-                for (pChild:
-                     stack.getPatternNode().getChildren()) {
+                for (PatternNode pChild : stack.getPatternNode().getChildren()) {
                     // pChild is a child of the query node for which m was created
                     if (m.getChildren().get(pChild) == null) {
                         // m lacks a child Match for the pattern node pChild
