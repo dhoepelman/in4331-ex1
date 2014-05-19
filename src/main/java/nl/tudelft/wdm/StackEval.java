@@ -6,6 +6,7 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
 
 public class StackEval extends DefaultHandler {
@@ -22,7 +23,7 @@ public class StackEval extends DefaultHandler {
     /**
      * pre numbers for all elements having started but not ended yet:
      */
-    Deque<Integer> openNodesPreNumbers;
+    Deque<Integer> openNodesPreNumbers = new ArrayDeque<>();
 
     public StackEval(PatternNode q) {
         this.q = q;
@@ -32,8 +33,7 @@ public class StackEval extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         for (TPEStack stack : rootStack.getDescendantStacks()) {
-            String currentPatterNodeName = stack.getPatternNode().getName();
-            if (localName.equals(currentPatterNodeName)
+            if (localName.equals(stack.getPatternNode().getName())
                     && stack.getParent().top().getStatus() == Match.STATUS.OPEN) {
                 Match m = new Match(currentPre, stack.getParent().top(), stack);
                 // create a match satisfying the ancestor conditions
@@ -61,6 +61,10 @@ public class StackEval extends DefaultHandler {
         // we need to find out if the element ending now corresponded
         // to matches in some stacks
         // first, get the pre number of the element that ends now:
+        if (openNodesPreNumbers.isEmpty()) {
+            // We have no open elements, ignore this element
+            return;
+        }
         int preOfLastOpen = openNodesPreNumbers.pop();
         // now look for Match objects having this pre number:
         for (TPEStack stack : rootStack.getDescendantStacks()) {

@@ -17,6 +17,7 @@ public class PatternNode {
     public PatternNode(String name, PatternNode parent) {
         this.name = name;
         this.stack = new TPEStack(this, parent.getStack());
+        parent.addChild(this);
     }
 
     public String getName() {
