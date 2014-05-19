@@ -42,5 +42,7 @@ public class Ex1 {
             e.printStackTrace();
             System.err.println("Unhandled SAX exception while reading file.");
         }
+
+        System.out.println(root.getStack());
     }
 }
