@@ -12,7 +12,7 @@ import java.io.IOException;
 public class Ex1 {
     public static void main(String... args) {
         if (args.length < 1) {
-            System.out.println("Ex1 document.xml");
+            System.out.println("USAGE: Ex1 document.xml");
             return;
         }
 

@@ -32,7 +32,9 @@ public class StackEval extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         for (TPEStack stack : rootStack.getDescendantStacks()) {
-            if (localName.equals(stack.getPatternNode().getName()) && stack.getParent().top().getStatus() == Match.STATUS.OPEN) {
+            String currentPatterNodeName = stack.getPatternNode().getName();
+            if (localName.equals(currentPatterNodeName)
+                    && stack.getParent().top().getStatus() == Match.STATUS.OPEN) {
                 Match m = new Match(currentPre, stack.getParent().top(), stack);
                 // create a match satisfying the ancestor conditions
                 // of query node stack.p

@@ -1,17 +1,18 @@
 package nl.tudelft.wdm;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
 public class Match {
     // Original Map <PatternNode, Array<Match>> children; , but Array isn't a class in Java...
     // I guess Map <PatternNode, List<Match>> was meant, and Guava has a MultiMap that is abstracts Map<P, List<Q>>
-    private Multimap<PatternNode, Match> children;
+    private final Multimap<PatternNode, Match> children = HashMultimap.create();
     private TPEStack st;
     private int pre;
-    private STATUS status;
+    private STATUS status = STATUS.OPEN;
     private Match parent;
 
-    public Match (int pre, Match parent, TPEStack stack) {
+    public Match(int pre, Match parent, TPEStack stack) {
         this.pre = pre;
         this.parent = parent;
         this.st = stack;

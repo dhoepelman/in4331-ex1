@@ -5,7 +5,7 @@ import java.util.Deque;
 import java.util.List;
 
 public class TPEStack {
-    private PatternNode p;
+    private final PatternNode p;
     // Deque is the java collections version of Stack
     private Deque<Match> matches;
     /**
@@ -15,12 +15,13 @@ public class TPEStack {
 
     private List<TPEStack> children;
 
-    public TPEStack() {
+    public TPEStack(PatternNode p) {
+        this.p = p;
         children = new ArrayList<>();
     }
 
-    public TPEStack(TPEStack parent) {
-        this();
+    public TPEStack(PatternNode p, TPEStack parent) {
+        this(p);
         parentStack = parent;
         parent.addChild(this);
     }

@@ -9,17 +9,14 @@ public class PatternNode {
     private final List<PatternNode> children = new ArrayList<>();
     private final TPEStack stack;
 
-    private PatternNode(String name, TPEStack stack) {
-        this.name = name;
-        this.stack = stack;
-    }
-
     public PatternNode(String name) {
-        this(name, new TPEStack());
+        this.name = name;
+        this.stack = new TPEStack(this);
     }
 
     public PatternNode(String name, PatternNode parent) {
-        this(name, new TPEStack(parent.getStack()));
+        this.name = name;
+        this.stack = new TPEStack(this, parent.getStack());
     }
 
     public String getName() {
