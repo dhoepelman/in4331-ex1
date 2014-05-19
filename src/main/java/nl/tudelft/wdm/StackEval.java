@@ -9,7 +9,7 @@ import org.xml.sax.SAXException;
 import java.util.Deque;
 
 public class StackEval implements ContentHandler {
-    TreePattern q;
+    final PatternNode q;
 
     /**
      * stack for the root of q
@@ -23,6 +23,11 @@ public class StackEval implements ContentHandler {
      * pre numbers for all elements having started but not ended yet:
      */
     Deque<Integer> openNodesPreNumbers;
+
+    public StackEval(PatternNode q) {
+        this.q = q;
+        this.rootStack = q.getStack();
+    }
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
@@ -62,13 +67,12 @@ public class StackEval implements ContentHandler {
                 Match m = stack.pop();
                 // check if m has child matches for all children
                 // of its pattern node
-                for (pChild:
-                     stack.getPatternNode().getChildren()) {
+                for (PatternNode pChild : stack.getPatternNode().getChildren()) {
                     // pChild is a child of the query node for which m was created
                     if (m.getChildren().get(pChild) == null) {
                         // m lacks a child Match for the pattern node pChild
                         // we remove m from its Stack, detach it from its parent etc.
-                        remove(m, stack);
+                        stack.remove(m);
                     }
                 }
                 m.close();

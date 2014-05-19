@@ -59,6 +59,10 @@ public class TPEStack {
         return matches.pop();
     }
 
+    public void remove(Match m) {
+        matches.remove(m);
+    }
+
     public void addChild(TPEStack child) {
         children.add(child);
     }
