@@ -11,6 +11,12 @@ public class Match {
     private STATUS status;
     private Match parent;
 
+    public Match (int pre, Match parent, TPEStack stack) {
+        this.pre = pre;
+        this.parent = parent;
+        this.st = stack;
+    }
+
     public STATUS getStatus() {
         return status;
     }
