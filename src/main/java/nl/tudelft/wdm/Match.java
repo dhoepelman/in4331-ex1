@@ -17,7 +17,7 @@ public class Match {
         this.parent = parent;
         this.st = stack;
         if (parent != null) {
-            parent.addChild(stack.getParent().getPatternNode(), this);
+            parent.addChild(stack.getPatternNode(), this);
         }
     }
 
@@ -84,7 +84,7 @@ public class Match {
                 sb.append(",\n");
             }
         }
-        sb.append("}\n");
+        sb.append("}");
         return sb.toString();
     }
 

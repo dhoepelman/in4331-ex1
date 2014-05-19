@@ -7,6 +7,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
 
 public class StackEval extends DefaultHandler {
@@ -96,10 +97,11 @@ public class StackEval extends DefaultHandler {
             // of its pattern node
             for (PatternNode pChild : current.getChildren()) {
                 // pChild is a child of the query node for which m was created
-                if (m.getChildren().get(pChild) == null) {
+                Collection<Match> childMatches = m.getChildren().get(pChild);
+                if (childMatches.isEmpty()) {
                     // m lacks a child Match for the pattern node pChild
                     // we remove m from its Stack, detach it from its parent etc.
-                    m.getParent().removeChild(pChild, m);
+                    m.getParent().removeChild(current, m);
                 }
             }
             m.close();

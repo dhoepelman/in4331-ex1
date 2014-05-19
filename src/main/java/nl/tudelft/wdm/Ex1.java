@@ -27,7 +27,8 @@ public class Ex1 {
 
         // Define pattern here
         PatternNode root = new PatternNode("people");
-        new PatternNode("person", root);
+        PatternNode person = new PatternNode("person", root);
+        new PatternNode("email", person);
 
         StackEval eval = new StackEval(root);
 

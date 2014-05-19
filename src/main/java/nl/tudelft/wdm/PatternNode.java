@@ -23,6 +23,26 @@ public class PatternNode {
         parent.addChild(this);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PatternNode that = (PatternNode) o;
+
+        if (!name.equals(that.name)) return false;
+        if (parent != null ? !parent.equals(that.parent) : that.parent != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + (parent != null ? parent.hashCode() : 0);
+        return result;
+    }
+
     public String getName() {
         return name;
     }
@@ -45,5 +65,10 @@ public class PatternNode {
 
     public PatternNode getParent() {
         return parent;
+    }
+
+    @Override
+    public String toString() {
+        return "PatternNode{" + name + "," + parent.getName() + '}';
     }
 }
