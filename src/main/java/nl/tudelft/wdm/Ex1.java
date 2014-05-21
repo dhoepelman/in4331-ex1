@@ -29,7 +29,7 @@ public class Ex1 {
         PatternNode root = new PatternNode("people");
         PatternNode person = new PatternNode("person", root);
         new PatternNode("email", person);
-        new PatternNode("sex", person, true);
+        //new PatternNode("sex", person, true);
 
         StackEval eval = new StackEval(root);
 

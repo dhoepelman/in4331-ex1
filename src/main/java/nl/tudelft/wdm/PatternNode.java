@@ -12,6 +12,11 @@ public class PatternNode {
     private final boolean optional;
     private final boolean attribute;
 
+    /**
+     * Creat the root PatternNode
+     *
+     * @param name the root
+     */
     public PatternNode(String name) {
         this.name = name;
         this.stack = new TPEStack(this);
@@ -20,15 +25,28 @@ public class PatternNode {
         this.attribute = false;
     }
 
+    /**
+     * Create a mandatory element PatternNode
+     */
     public PatternNode(String name, PatternNode parent) {
         this(name, parent, false, false);
     }
 
+    /**
+     * Create a mandatory PatternNode
+     * @param attribute whether the PatternNode matches attributes or elements
+     */
     public PatternNode(String name, PatternNode parent, boolean attribute) {
-        this(name, parent, false, attribute);
+        this(name, parent, attribute, false);
     }
 
-    public PatternNode(String name, PatternNode parent, boolean optional, boolean attribute) {
+    /**
+     * Create a PatternNode
+     *
+     * @param optional  whether the PatternNode is mandatory
+     * @param attribute whether the PatternNode matches attributes or elements
+     */
+    public PatternNode(String name, PatternNode parent, boolean attribute, boolean optional) {
         this.name = name;
         this.stack = new TPEStack(this, parent.getStack());
         this.optional = optional;
