@@ -9,18 +9,40 @@ public class PatternNode {
     private final List<PatternNode> children = new ArrayList<>();
     private final PatternNode parent;
     private final TPEStack stack;
+    private final boolean optional;
+    private final boolean attribute;
 
     public PatternNode(String name) {
         this.name = name;
         this.stack = new TPEStack(this);
         this.parent = null;
+        this.optional = false;
+        this.attribute = false;
     }
 
     public PatternNode(String name, PatternNode parent) {
+        this(name, parent, false, false);
+    }
+
+    public PatternNode(String name, PatternNode parent, boolean attribute) {
+        this(name, parent, false, attribute);
+    }
+
+    public PatternNode(String name, PatternNode parent, boolean optional, boolean attribute) {
         this.name = name;
         this.stack = new TPEStack(this, parent.getStack());
+        this.optional = optional;
+        this.attribute = attribute;
         this.parent = parent;
         parent.addChild(this);
+    }
+
+    public boolean isAttribute() {
+        return attribute;
+    }
+
+    public boolean isOptional() {
+        return optional;
     }
 
     @Override

@@ -101,7 +101,7 @@ public class StackEval extends DefaultHandler {
             for (PatternNode pChild : current.getChildren()) {
                 // pChild is a child of the query node for which m was created
                 Collection<Match> childMatches = m.getChildren().get(pChild);
-                if (childMatches.isEmpty()) {
+                if (childMatches.isEmpty() && !pChild.isOptional()) {
                     // m lacks a child Match for the pattern node pChild
                     // we remove m from its Stack, detach it from its parent etc.
                     m.getParent().removeChild(current, m);
