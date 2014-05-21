@@ -75,7 +75,12 @@ public class StackEval extends DefaultHandler {
             // create a match satisfying the ancestor conditions
             // of query node stack.p
             stack.push(m);
-            openNodesPreNumbers.push(currentPre);
+            if (node.isAttribute()) {
+                // Attributes don't get handled by endElement, so immidiatly close
+                m.close();
+            } else {
+                openNodesPreNumbers.push(currentPre);
+            }
         }
     }
 
@@ -104,7 +109,11 @@ public class StackEval extends DefaultHandler {
                 if (childMatches.isEmpty() && !pChild.isOptional()) {
                     // m lacks a child Match for the pattern node pChild
                     // we remove m from its Stack, detach it from its parent etc.
-                    m.getParent().removeChild(current, m);
+                    if (m != rootMatch) {
+                        m.getParent().removeChild(current, m);
+                    } else {
+                        rootMatch = null;
+                    }
                 }
             }
             m.close();

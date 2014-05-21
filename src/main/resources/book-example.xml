@@ -1,13 +1,13 @@
 <people>
-    <person>
-        <email>m@home</email>
+    <person sex="female">
+    <email>m@home</email>
         <name>
             <first>Mary</first>
             <last>Jones</last>
         </name>
     </person>
-    <person>
-        <name>
+    <person sex="male">
+    <name>
             <first>Bob</first>
             <last>Lang</last>
         </name>
