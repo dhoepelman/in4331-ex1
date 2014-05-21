@@ -64,7 +64,7 @@ public class StackEval extends DefaultHandler {
      */
     private void addMatch(String qName, PatternNode node) {
         TPEStack stack = node.getStack();
-        if (qName.equals(node.getName()) && (node.isRoot() || stack.getParent().top().getStatus() == Match.STATUS.OPEN)) {
+        if ((qName.equals(node.getName()) || node.getName().equals("*")) && (node.isRoot() || stack.getParent().top().getStatus() == Match.STATUS.OPEN)) {
             if (!node.isAttribute()) {
                 current = node;
             }
