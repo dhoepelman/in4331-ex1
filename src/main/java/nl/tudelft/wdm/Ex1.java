@@ -33,6 +33,7 @@ public class Ex1 {
         PatternNode root = new PatternNode.Builder("people").build();
         PatternNode person = new PatternNode.Builder(root)
                 .makeWildcardNode()
+                .makeReturnResult()
                 .build();
         PatternNode email = new PatternNode.Builder("email", person)
                 .makeOptional()
@@ -62,6 +63,8 @@ public class Ex1 {
 
         System.out.println("Completed successfully (niet hopen)");
         System.out.println(eval.getRootMatch());
+
+        // print result tuples
         Table<Integer, String, Integer> tuples = new ResultTupleCalculator(eval.getRootMatch()).calculate();
         final SortedSet<String> columns = new TreeSet<>(tuples.columnKeySet());
         for (String column : columns) {
@@ -76,6 +79,52 @@ public class Ex1 {
                 System.out.print("\t");
             }
             System.out.println();
+        }
+
+        // print result xml
+       printXmlNode(eval.getRootMatch(), 0);
+
+    }
+
+    public static void printXmlNode(Match match, int depth) {
+        // print start element of match
+        if (match.getStack().getPatternNode().isReturnResult()) {
+            printIndentation(depth);
+            System.out.print("<" + match.getName());
+            // check for child attributes and print these within the xml tag.
+            for (Match child : match.getChildren().values()) {
+                if (child.getStack().getPatternNode().isAttribute()) {
+                    System.out.print(" " + child.getName());
+                    if (child.getTextValue() != null) {
+                        System.out.print("=\"" + child.getTextValue() + "\"");
+                    }
+                }
+            }
+            System.out.print(">\n");
+            printIndentation(depth+1);
+            if (match.getTextValue() != null) {
+                System.out.print(match.getTextValue() + "\n");
+            }
+            depth++;
+        }
+
+        // print children elements of match which are not attribute
+        for (Match m : match.getChildren().values()) {
+            if (!m.getStack().getPatternNode().isAttribute()) {
+                printXmlNode(m, depth);
+            }
+        }
+
+        // print end element of match
+        if (match.getStack().getPatternNode().isReturnResult()) {
+            printIndentation(depth-1);
+            System.out.print("</" + match.getName() + ">\n");
+        }
+    }
+
+    public static void printIndentation (int depth){
+        for (int i = 0; i < depth; i++) {
+            System.out.print("\t");
         }
     }
 }

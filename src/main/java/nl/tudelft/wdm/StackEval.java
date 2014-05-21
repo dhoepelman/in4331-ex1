@@ -6,6 +6,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Deque;
 
@@ -35,7 +36,7 @@ public class StackEval extends DefaultHandler {
         currentPre++;
         if (rootMatch == null) {
             if (qName.equals(root.getName()) || root.getName().equals("*")) {
-                addMatch(qName, root);
+                addMatch(qName, root, null);
             } else {
                 throw new RuntimeException("Root of the query tree does not correspond with root of the XML document");
             }
@@ -43,7 +44,7 @@ public class StackEval extends DefaultHandler {
             //for (TPEStack stack : rootStack.getDescendantStacks()) {
             for (PatternNode node : current.getStack().getPatternNode().getChildren()) {
                 if (!node.isAttribute()) {
-                    addMatch(qName, node);
+                    addMatch(qName, node, null);
                 }
             }
         }
@@ -53,9 +54,8 @@ public class StackEval extends DefaultHandler {
             // similarly look for query nodes possibly matched
             //for (TPEStack s : rootStack.getDescendantStacks()) {
             for (PatternNode node : current.getStack().getPatternNode().getChildren()) {
-                if (node.isAttribute() &&
-                        (node.getValuePredicate() == null || node.getValuePredicate().equals(attributes.getValue(i)))) {
-                    addMatch(attribute, node);
+                if (node.isAttribute()) {
+                    addMatch(attribute, node, attributes.getValue(i));
                 }
             }
         }
@@ -67,13 +67,15 @@ public class StackEval extends DefaultHandler {
      * @param qName the name of the element/attribute
      * @param node  the node from the query tree
      */
-    private void addMatch(String qName, PatternNode node) {
+    private void addMatch(String qName, PatternNode node, String value) {
         TPEStack stack = node.getStack();
         if ((qName.equals(node.getName()) || node.getName().equals("*"))
                 && (node.isRoot() || stack.getParent().top().getStatus() == Match.STATUS.OPEN)) {
             Match m = new Match(currentPre, (node.isRoot() ? null : stack.getParent().top()), stack, qName);
             if (!node.isAttribute()) {
                 current = m;
+            } else {
+                m.setTextValue(value);
             }
             if (node.isRoot()) {
                 rootMatch = m;
@@ -172,7 +174,7 @@ public class StackEval extends DefaultHandler {
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (currentPre == openNodesPreNumbers.peek()) {
-            current.setTextValue(new String(ch));
+            current.setTextValue(new String(Arrays.copyOfRange(ch, start, start+length)));
         }
     }
 
