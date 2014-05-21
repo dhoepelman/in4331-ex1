@@ -15,12 +15,21 @@ public class ResultTupleCalculator {
      * Contains the attributes for all unprocessed matches
      */
     private final Table<Match, String, Integer> currentAttributeMappings = HashBasedTable.create();
+    private final boolean returnAll;
     private Integer currentRow = 0;
     private int currentWildCardNumber = 1;
     private Map<PatternNode, String> wildcardMap = new HashMap<>();
 
     public ResultTupleCalculator(Match m) {
+        this(m, false);
+    }
+
+    /**
+     * @param returnAll if true, will ignore the returnValue setting of PatternNodes and will return everything
+     */
+    public ResultTupleCalculator(Match m, boolean returnAll) {
         this.m = m;
+        this.returnAll = returnAll;
     }
 
     /**
@@ -29,36 +38,29 @@ public class ResultTupleCalculator {
      * Wildcards will be named "*1", "*2", ... ,"*n"
      */
     public Table<Integer, String, Integer> calculate() {
-        return calculate(false);
-    }
-
-    /**
-     * Returns the results as a table with an arbitrary integer as row number, PatternNode name as column, and preorder number as value.
-     * If a node is optional it will not have a mapping (table.get() will return null)
-     * Wildcards will be named "*1", "*2", ... ,"*n"
-     *
-     * @param returnAll if true, will ignore the returnValue setting of PatternNodes and will return everything
-     */
-    public Table<Integer, String, Integer> calculate(boolean returnAll) {
         calculate(m);
         return Tables.unmodifiableTable(results);
     }
 
     private void calculate(Match currentMatch) {
         final String columnName = getColumnName(currentMatch);
-        // Put the current match into the mapping
-        currentMappings.put(columnName, currentMatch.getPre());
-
+        if (returnAll || currentMatch.getStack().getPatternNode().isReturnResult()) {
+            // Put the current match into the mapping
+            currentMappings.put(columnName, currentMatch.getPre());
+        }
 
         // Process all the attribute children
         for (Match child : currentMatch.getChildren().values()) {
-            if (child.getStack().getPatternNode().isAttribute()) {
+            final PatternNode childPatternNode = child.getStack().getPatternNode();
+            if (childPatternNode.isAttribute()) {
                 // Atrributes belong to the current Match element node
                 // Assert that the attribute does not have children, or there is a mistake somewhere (possibly in this class)
                 if (child.getChildren().size() > 0) {
                     throw new RuntimeException("A attribute match has child matches. That shouldn't be possible.");
                 }
-                currentAttributeMappings.put(currentMatch, getColumnName(child), child.getPre());
+                if (returnAll || childPatternNode.isReturnResult()) {
+                    currentAttributeMappings.put(currentMatch, getColumnName(child), child.getPre());
+                }
             }
         }
 
