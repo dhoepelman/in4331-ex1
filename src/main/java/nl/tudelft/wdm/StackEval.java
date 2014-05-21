@@ -112,7 +112,7 @@ public class StackEval extends DefaultHandler {
 
             // check if valuePredicates are in the match
             if (current.getStack().getPatternNode().getValuePredicate() != null
-                    && current.getStack().getPatternNode().getValuePredicate().equals(m.getValuePredicate())) {
+                    && current.getStack().getPatternNode().getValuePredicate().equals(m.getTextValue())) {
                 incomplete = true;
             }
 
@@ -172,7 +172,7 @@ public class StackEval extends DefaultHandler {
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (currentPre == openNodesPreNumbers.peek()) {
-            current.setValuePredicate(new String(ch));
+            current.setTextValue(new String(ch));
         }
     }
 

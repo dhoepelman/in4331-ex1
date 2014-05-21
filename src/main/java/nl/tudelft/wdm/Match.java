@@ -11,7 +11,7 @@ public class Match {
     private final int pre;
     private final Match parent;
     private final String name;
-    private String valuePredicate;
+    private String textValue;
     private STATUS status = STATUS.OPEN;
 
     public Match(int pre, Match parent, TPEStack stack, String name) {
@@ -24,12 +24,12 @@ public class Match {
         this.name = name;
     }
 
-    public String getValuePredicate() {
-        return valuePredicate;
+    public String getTextValue() {
+        return textValue;
     }
 
-    public void setValuePredicate(String valuePredicate) {
-        this.valuePredicate = valuePredicate;
+    public void setTextValue(String textValue) {
+        this.textValue = textValue;
     }
 
     public String getName() {
