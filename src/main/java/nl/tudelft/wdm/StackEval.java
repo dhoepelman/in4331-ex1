@@ -33,8 +33,12 @@ public class StackEval extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         currentPre++;
-        if (qName.equals(root.getName())) {
-            addMatch(qName, root);
+        if (rootMatch == null) {
+            if (qName.equals(root.getName()) || root.getName().equals("*")) {
+                addMatch(qName, root);
+            } else {
+                throw new RuntimeException("Root of the query tree does not correspond with root of the XML document");
+            }
         } else {
             //for (TPEStack stack : rootStack.getDescendantStacks()) {
             for (PatternNode node : current.getChildren()) {
@@ -64,7 +68,9 @@ public class StackEval extends DefaultHandler {
      */
     private void addMatch(String qName, PatternNode node) {
         TPEStack stack = node.getStack();
-        if ((qName.equals(node.getName()) || node.getName().equals("*")) && (node.isRoot() || stack.getParent().top().getStatus() == Match.STATUS.OPEN)) {
+        if ((qName.equals(node.getName()) || node.getName().equals("*")) &&             // Check if the node name matches the element or if the node is a wildcard
+                (node.isRoot() || stack.getParent().top().getStatus() == Match.STATUS.OPEN) // And check if the nd
+                ) {
             if (!node.isAttribute()) {
                 current = node;
             }
