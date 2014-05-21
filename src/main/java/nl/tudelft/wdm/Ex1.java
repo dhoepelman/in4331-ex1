@@ -1,5 +1,6 @@
 package nl.tudelft.wdm;
 
+import com.google.common.collect.Table;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -8,6 +9,9 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class Ex1 {
     public static void main(String... args) {
@@ -58,5 +62,20 @@ public class Ex1 {
 
         System.out.println("Completed successfully (niet hopen)");
         System.out.println(eval.getRootMatch());
+        Table<Integer, String, Integer> tuples = new ResultTupleCalculator(eval.getRootMatch()).calculate();
+        final SortedSet<String> columns = new TreeSet<>(tuples.columnKeySet());
+        for (String column : columns) {
+            System.out.print(column);
+            System.out.print("\t");
+        }
+        System.out.println();
+        for (Map<String, Integer> row : tuples.rowMap().values()) {
+            for (String column : columns) {
+                final Integer value = row.get(column);
+                System.out.print((value == null ? "_" : value));
+                System.out.print("\t");
+            }
+            System.out.println();
+        }
     }
 }

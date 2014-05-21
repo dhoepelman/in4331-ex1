@@ -45,7 +45,10 @@ public class PatternNode {
 
     public boolean hasValuePredicate() {
         return valuePredicate != null;
+    }
 
+    public boolean isWildCard() {
+        return name.equals("*");
     }
 
     @Override
