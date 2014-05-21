@@ -42,6 +42,14 @@ public class ResultTupleCalculator {
         return Tables.unmodifiableTable(results);
     }
 
+    /**
+     * Process the matches recursively
+     * On a high-level, this works as follows by going through the match tree depth-first:
+     * - Process a match by remembering it's (columnName,PreorderNumber)
+     * - If the match has element children, process them
+     * - Otherwise if the match is a leaf: Write a row to the table. The row contains the (columnName,PreOrderNumber) of the current match and all matches up the tree
+     * - When a match is processed, forget the (columnName,PreOrderNumber) of that match
+     */
     private void calculate(Match currentMatch) {
         final String columnName = getColumnName(currentMatch);
         if (returnAll || currentMatch.getStack().getPatternNode().isReturnResult()) {
@@ -53,11 +61,7 @@ public class ResultTupleCalculator {
         for (Match child : currentMatch.getChildren().values()) {
             final PatternNode childPatternNode = child.getStack().getPatternNode();
             if (childPatternNode.isAttribute()) {
-                // Atrributes belong to the current Match element node
-                // Assert that the attribute does not have children, or there is a mistake somewhere (possibly in this class)
-                if (child.getChildren().size() > 0) {
-                    throw new RuntimeException("A attribute match has child matches. That shouldn't be possible.");
-                }
+                assert child.getChildren().size() == 0;
                 if (returnAll || childPatternNode.isReturnResult()) {
                     currentAttributeMappings.put(currentMatch, getColumnName(child), child.getPre());
                 }
@@ -77,21 +81,28 @@ public class ResultTupleCalculator {
 
         if (!hasElementChildren) {
             // We are at a leaf, make the table row
-            for (Map.Entry<String, Integer> entry : currentMappings.entrySet()) {
-                results.put(currentRow, entry.getKey(), entry.getValue());
-            }
-            // Now add the attributes of all the matches
-            for (Map<String, Integer> attributes : currentAttributeMappings.rowMap().values()) {
-                for (Map.Entry<String, Integer> attribute : attributes.entrySet()) {
-                    results.put(currentRow, attribute.getKey(), attribute.getValue());
-                }
-            }
-            currentRow++;
+            makeTableRow();
         }
 
         // We're done with this match, remove it from the mappings
         currentMappings.remove(columnName);
         currentAttributeMappings.row(currentMatch).clear();
+    }
+
+    /**
+     * Make a table row out of the current mappings
+     */
+    private void makeTableRow() {
+        for (Map.Entry<String, Integer> entry : currentMappings.entrySet()) {
+            results.put(currentRow, entry.getKey(), entry.getValue());
+        }
+        // Now add the attributes of all the matches
+        for (Map<String, Integer> attributes : currentAttributeMappings.rowMap().values()) {
+            for (Map.Entry<String, Integer> attribute : attributes.entrySet()) {
+                results.put(currentRow, attribute.getKey(), attribute.getValue());
+            }
+        }
+        currentRow++;
     }
 
     /**
