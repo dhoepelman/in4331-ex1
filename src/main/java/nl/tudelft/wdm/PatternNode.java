@@ -11,48 +11,20 @@ public class PatternNode {
     private final TPEStack stack;
     private final boolean optional;
     private final boolean attribute;
+    private final boolean returnResult;
+    private final String valuePredicate;
 
-    /**
-     * Creat the root PatternNode
-     *
-     * @param name the root
-     */
-    public PatternNode(String name) {
+    private PatternNode(String name, PatternNode parent, boolean optional, boolean attribute, boolean returnResult, String valuePredicate) {
         this.name = name;
-        this.stack = new TPEStack(this);
-        this.parent = null;
-        this.optional = false;
-        this.attribute = false;
-    }
-
-    /**
-     * Create a mandatory element PatternNode
-     */
-    public PatternNode(String name, PatternNode parent) {
-        this(name, parent, false, false);
-    }
-
-    /**
-     * Create a mandatory PatternNode
-     * @param attribute whether the PatternNode matches attributes or elements
-     */
-    public PatternNode(String name, PatternNode parent, boolean attribute) {
-        this(name, parent, attribute, false);
-    }
-
-    /**
-     * Create a PatternNode
-     *
-     * @param optional  whether the PatternNode is mandatory
-     * @param attribute whether the PatternNode matches attributes or elements
-     */
-    public PatternNode(String name, PatternNode parent, boolean attribute, boolean optional) {
-        this.name = name;
-        this.stack = new TPEStack(this, parent.getStack());
+        this.stack = new TPEStack(this, (parent == null ? null : parent.getStack()));
         this.optional = optional;
         this.attribute = attribute;
         this.parent = parent;
-        parent.addChild(this);
+        this.returnResult = returnResult;
+        this.valuePredicate = valuePredicate;
+        if (parent != null) {
+            parent.addChild(this);
+        }
     }
 
     public boolean isAttribute() {
@@ -61,6 +33,19 @@ public class PatternNode {
 
     public boolean isOptional() {
         return optional;
+    }
+
+    public boolean isReturnResult() {
+        return returnResult;
+    }
+
+    public String getValuePredicate() {
+        return valuePredicate;
+    }
+
+    public boolean hasValuePredicate() {
+        return valuePredicate != null;
+
     }
 
     @Override
@@ -107,5 +92,88 @@ public class PatternNode {
     @Override
     public String toString() {
         return "PatternNode{" + name + "," + (parent == null ? "root" : parent.getName()) + '}';
+    }
+
+    public static class Builder {
+        private String name;
+        private PatternNode parent;
+        private boolean optional = false;
+        private boolean attribute = false;
+        private boolean returnResult = false;
+        private String valuePredicate = null;
+
+        /**
+         * Create a builder for a root wildcard node
+         */
+        public Builder() {
+            makeWildcardNode();
+        }
+
+        ;
+
+        /**
+         * Create a builder for a root node
+         */
+        public Builder(String name) {
+            setName(name);
+        }
+
+        /**
+         * Create a builder for a wildcard node
+         */
+        public Builder(PatternNode parent) {
+            setParent(parent);
+            makeWildcardNode();
+        }
+
+        /**
+         * Create a builder for a normal node
+         */
+        public Builder(String name, PatternNode parent) {
+            setName(name);
+            setParent(parent);
+        }
+
+        public Builder makeWildcardNode() {
+            this.name = "*";
+            return this;
+        }
+
+        public Builder setParent(PatternNode parent) {
+            this.parent = parent;
+            return this;
+        }
+
+        public Builder makeOptional() {
+            this.optional = true;
+            return this;
+        }
+
+        public Builder makeAttributeNode() {
+            this.attribute = true;
+            return this;
+        }
+
+        public Builder makeReturnResult() {
+            this.returnResult = true;
+            return this;
+        }
+
+        public Builder setValuePredicate(String valuePredicate) {
+            this.valuePredicate = valuePredicate;
+            return this;
+        }
+
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public PatternNode build() {
+            if (name == null) {
+                throw new RuntimeException("Name for PatternNode not provided");
+            }
+            return new PatternNode(name, parent, optional, attribute, returnResult, valuePredicate);
+        }
     }
 }

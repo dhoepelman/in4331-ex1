@@ -26,10 +26,18 @@ public class Ex1 {
         }
 
         // Define pattern here
-        PatternNode root = new PatternNode("people");
-        PatternNode person = new PatternNode("*", root);
-        new PatternNode("email", person, false, true);
-        new PatternNode("sex", person, true, true);
+        PatternNode root = new PatternNode.Builder("people").build();
+        PatternNode person = new PatternNode.Builder(root)
+                .makeWildcardNode()
+                .build();
+        PatternNode email = new PatternNode.Builder("email", person)
+                .makeOptional()
+                .makeReturnResult()
+                .build();
+        PatternNode sex = new PatternNode.Builder("sex", person)
+                .makeAttributeNode()
+                .makeReturnResult()
+                .build();
 
         StackEval eval = new StackEval(root);
 

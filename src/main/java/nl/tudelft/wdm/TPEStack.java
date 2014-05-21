@@ -13,16 +13,18 @@ public class TPEStack {
     /**
      * Parent stack. Called spar in the book
      */
-    private TPEStack parentStack;
+    private final TPEStack parentStack;
 
     public TPEStack(PatternNode p) {
-        this.p = p;
+        this(p, null);
     }
 
     public TPEStack(PatternNode p, TPEStack parent) {
-        this(p);
+        this.p = p;
         parentStack = parent;
-        parent.addChild(this);
+        if (parent != null) {
+            parent.addChild(this);
+        }
     }
 
     public PatternNode getPatternNode() {
