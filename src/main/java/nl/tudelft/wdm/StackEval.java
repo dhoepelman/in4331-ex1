@@ -39,7 +39,9 @@ public class StackEval extends DefaultHandler {
         } else {
             //for (TPEStack stack : rootStack.getDescendantStacks()) {
             for (PatternNode node : current.getChildren()) {
-                addMatch(qName, node);
+                if (!node.isAttribute()) {
+                    addMatch(qName, node);
+                }
             }
         }
         for (String attribute : new AttributesIterator(attributes)) {
@@ -47,19 +49,25 @@ public class StackEval extends DefaultHandler {
             // similarly look for query nodes possibly matched
             //for (TPEStack s : rootStack.getDescendantStacks()) {
             for (PatternNode node : current.getChildren()) {
-                TPEStack s = node.getStack();
-                if (attribute.equals(node.getName()) && s.getParent().top().getStatus() == Match.STATUS.OPEN) {
-                    Match ma = new Match(currentPre, s.getParent().top(), s);
-                    s.push(ma);
+                if (node.isAttribute()) {
+                    addMatch(attribute, node);
                 }
             }
         }
     }
 
+    /**
+     * Test if an element or attribute corresponds to the node. If so, make a match
+     *
+     * @param qName the name of the element/attribute
+     * @param node  the node from the query tree
+     */
     private void addMatch(String qName, PatternNode node) {
         TPEStack stack = node.getStack();
         if (qName.equals(node.getName()) && (node.isRoot() || stack.getParent().top().getStatus() == Match.STATUS.OPEN)) {
-            current = node;
+            if (!node.isAttribute()) {
+                current = node;
+            }
             Match m = new Match(currentPre, (node.isRoot() ? null : stack.getParent().top()), stack);
             if (node.isRoot()) {
                 rootMatch = m;

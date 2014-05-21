@@ -13,8 +13,8 @@
         </name>
     </person>
     <person>
-        <email>a@home</email>
-        <email>a@work</email>
+        <email type="home">a@home</email>
+        <email type="work">a@work</email>
         <name>
             <first>Al</first>
             <last>Hart</last>
