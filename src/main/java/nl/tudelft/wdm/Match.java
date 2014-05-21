@@ -10,15 +10,21 @@ public class Match {
     private final TPEStack st;
     private final int pre;
     private final Match parent;
+    private final String name;
     private STATUS status = STATUS.OPEN;
 
-    public Match(int pre, Match parent, TPEStack stack) {
+    public Match(int pre, Match parent, TPEStack stack, String name) {
         this.pre = pre;
         this.parent = parent;
         this.st = stack;
         if (parent != null) {
             parent.addChild(stack.getPatternNode(), this);
         }
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public STATUS getStatus() {
@@ -37,7 +43,7 @@ public class Match {
         children.put(pn, m);
     }
 
-    public TPEStack getSt() {
+    public TPEStack getStack() {
         return st;
     }
 
@@ -50,8 +56,8 @@ public class Match {
         return parent;
     }
 
-    public void removeChild(PatternNode pChild, Match m) {
-        children.remove(pChild, m);
+    public void removeChild(Match m) {
+        children.remove(m.getStack().getPatternNode(), m);
     }
 
     public String toString() {
@@ -65,7 +71,7 @@ public class Match {
         }
         String tabs = tabsSB.toString();
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%sMatch(%s, %s, %d) {", tabs, getSt().getPatternNode().getName(), getStatus().name(), getPre()));
+        sb.append(String.format("%sMatch(%s, %s, %d) {", tabs, getName(), getStatus().name(), getPre()));
         if (children.size() > 0) {
             sb.append("\n");
             for (Match m : children.values()) {
