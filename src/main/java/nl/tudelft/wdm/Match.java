@@ -11,6 +11,7 @@ public class Match {
     private final int pre;
     private final Match parent;
     private final String name;
+    private String textValue;
     private STATUS status = STATUS.OPEN;
 
     public Match(int pre, Match parent, TPEStack stack, String name) {
@@ -21,6 +22,14 @@ public class Match {
             parent.addChild(stack.getPatternNode(), this);
         }
         this.name = name;
+    }
+
+    public String getTextValue() {
+        return textValue;
+    }
+
+    public void setTextValue(String textValue) {
+        this.textValue = textValue;
     }
 
     public String getName() {

@@ -53,7 +53,8 @@ public class StackEval extends DefaultHandler {
             // similarly look for query nodes possibly matched
             //for (TPEStack s : rootStack.getDescendantStacks()) {
             for (PatternNode node : current.getStack().getPatternNode().getChildren()) {
-                if (node.isAttribute()) {
+                if (node.isAttribute() &&
+                        (node.getValuePredicate() == null || node.getValuePredicate().equals(attributes.getValue(i)))) {
                     addMatch(attribute, node);
                 }
             }
@@ -68,7 +69,8 @@ public class StackEval extends DefaultHandler {
      */
     private void addMatch(String qName, PatternNode node) {
         TPEStack stack = node.getStack();
-        if ((qName.equals(node.getName()) || node.getName().equals("*")) && (node.isRoot() || stack.getParent().top().getStatus() == Match.STATUS.OPEN)) {
+        if ((qName.equals(node.getName()) || node.getName().equals("*"))
+                && (node.isRoot() || stack.getParent().top().getStatus() == Match.STATUS.OPEN)) {
             Match m = new Match(currentPre, (node.isRoot() ? null : stack.getParent().top()), stack, qName);
             if (!node.isAttribute()) {
                 current = m;
@@ -100,11 +102,20 @@ public class StackEval extends DefaultHandler {
         // now look for Match objects having this pre number:
         //for (TPEStack stack : rootStack.getDescendantStacks()) {
         //    if (stack.getPatternNode().getName().equals(qName) && stack.top().getStatus() == Match.STATUS.OPEN && stack.top().getPre() == preOfLastOpen) {
-        if (current.getName().equals(qName) || current.getName().equals("*")) {
+        if (current.getName().equals(qName)) {
             int preOfLastOpen = openNodesPreNumbers.pop();
             TPEStack stack = current.getStack();
             // all descendants of this Match have been traversed by now.
             Match m = stack.pop();
+
+            boolean incomplete = false;
+
+            // check if valuePredicates are in the match
+            if (current.getStack().getPatternNode().getValuePredicate() != null
+                    && current.getStack().getPatternNode().getValuePredicate().equals(m.getTextValue())) {
+                incomplete = true;
+            }
+
             // check if m has child matches for all children
             // of its pattern node
             for (PatternNode pChild : current.getStack().getPatternNode().getChildren()) {
@@ -112,12 +123,17 @@ public class StackEval extends DefaultHandler {
                 Collection<Match> childMatches = m.getChildren().get(pChild);
                 if (childMatches.isEmpty() && !pChild.isOptional()) {
                     // m lacks a child Match for the pattern node pChild
-                    // we remove m from its Stack, detach it from its parent etc.
-                    if (m != rootMatch) {
-                        m.getParent().removeChild(m);
-                    } else {
-                        rootMatch = null;
-                    }
+                    incomplete = true;
+                    break;
+                }
+            }
+
+            if (incomplete) {
+                // we remove m from its Stack, detach it from its parent etc.
+                if (m != rootMatch) {
+                    m.getParent().removeChild(m);
+                } else {
+                    rootMatch = null;
                 }
             }
             m.close();
@@ -155,7 +171,9 @@ public class StackEval extends DefaultHandler {
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-        // TODO: Implement
+        if (currentPre == openNodesPreNumbers.peek()) {
+            current.setTextValue(new String(ch));
+        }
     }
 
     @Override
