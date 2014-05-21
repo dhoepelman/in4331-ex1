@@ -1,6 +1,5 @@
 package nl.tudelft.wdm;
 
-import nl.tudelft.wdm.misc.AttributesIterator;
 import org.xml.sax.Attributes;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
@@ -44,8 +43,9 @@ public class StackEval extends DefaultHandler {
                 }
             }
         }
-        for (String attribute : new AttributesIterator(attributes)) {
+        for (int i = 0; i < attributes.getLength(); i++) {
             currentPre++;
+            String attribute = attributes.getQName(i);
             // similarly look for query nodes possibly matched
             //for (TPEStack s : rootStack.getDescendantStacks()) {
             for (PatternNode node : current.getChildren()) {
