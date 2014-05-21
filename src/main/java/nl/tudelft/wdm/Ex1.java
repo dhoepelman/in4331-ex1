@@ -41,7 +41,6 @@ public class Ex1 {
         PatternNode sex = new PatternNode.Builder("sex", person)
                 .makeAttributeNode()
                 .makeReturnResult()
-                .setValuePredicate("female")
                 .build();
 
         StackEval eval = new StackEval(root);
