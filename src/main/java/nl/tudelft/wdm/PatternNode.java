@@ -106,6 +106,6 @@ public class PatternNode {
 
     @Override
     public String toString() {
-        return "PatternNode{" + name + "," + parent.getName() + '}';
+        return "PatternNode{" + name + "," + (parent == null ? "root" : parent.getName()) + '}';
     }
 }
