@@ -33,7 +33,6 @@ public class Ex1 {
         PatternNode root = new PatternNode.Builder("people").build();
         PatternNode person = new PatternNode.Builder(root)
                 .makeWildcardNode()
-                .makeReturnResult()
                 .build();
         PatternNode email = new PatternNode.Builder("email", person)
                 .makeOptional()
@@ -88,7 +87,8 @@ public class Ex1 {
 
     public static void printXmlNode(Match match, int depth) {
         // print start element of match
-        if (match.getStack().getPatternNode().isReturnResult()) {
+        boolean attributesResult = false;
+        if (match.getStack().getPatternNode().isReturnResult() || (attributesResult = attributesReturnResult(match.getStack().getPatternNode()))) {
             printIndentation(depth);
             System.out.print("<" + match.getName());
             // check for child attributes and print these within the xml tag.
@@ -101,8 +101,8 @@ public class Ex1 {
                 }
             }
             System.out.print(">\n");
-            printIndentation(depth+1);
             if (match.getTextValue() != null) {
+                printIndentation(depth+1);
                 System.out.print(match.getTextValue() + "\n");
             }
             depth++;
@@ -116,7 +116,7 @@ public class Ex1 {
         }
 
         // print end element of match
-        if (match.getStack().getPatternNode().isReturnResult()) {
+        if (match.getStack().getPatternNode().isReturnResult() || attributesResult) {
             printIndentation(depth-1);
             System.out.print("</" + match.getName() + ">\n");
         }
@@ -126,5 +126,15 @@ public class Ex1 {
         for (int i = 0; i < depth; i++) {
             System.out.print("\t");
         }
+    }
+
+    public static boolean attributesReturnResult(PatternNode p) {
+        for (PatternNode pChild : p.getChildren()) {
+            if (pChild.isAttribute() && pChild.isReturnResult()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

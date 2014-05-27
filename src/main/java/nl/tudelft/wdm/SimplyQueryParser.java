@@ -37,7 +37,7 @@ public class SimplyQueryParser {
         variable = consume(REGEX_VARIABLE).substring(1);
         consume("in");
         String variableExpr = consume(REGEX_EXPR);
-
+        return null;
     }
 
     private String consume(String regex) {
