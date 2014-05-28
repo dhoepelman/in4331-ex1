@@ -38,8 +38,14 @@ public class Ex1 {
                 .makeOptional()
                 .makeReturnResult()
                 .build();
-        PatternNode sex = new PatternNode.Builder("sex", person)
-                .makeAttributeNode()
+        PatternNode name = new PatternNode.Builder("name", person)
+                .build();
+        PatternNode fname = new PatternNode.Builder("first", name)
+                .makeOptional()
+                .makeReturnResult()
+                .build();
+        PatternNode lname = new PatternNode.Builder("last", name)
+                .makeOptional()
                 .makeReturnResult()
                 .build();
 

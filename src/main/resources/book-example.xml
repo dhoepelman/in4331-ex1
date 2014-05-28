@@ -4,7 +4,9 @@
         <name>
             <first>Mary</first>
             <last>Jones</last>
+            <!--<last>Potter</last>-->
         </name>
+        <!--<email>m@work</email>-->
     </person>
     <person sex="male">
         <name>
