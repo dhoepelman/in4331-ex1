@@ -6,7 +6,12 @@
             <last>Jones</last>
             <!--<last>Potter</last>-->
         </name>
-        <!--<email>m@work</email>-->
+        <email>m@work</email>
+        <name>
+            <first>Alias</first>
+            <last>Jones</last>
+            <!--<last>Potter</last>-->
+        </name>
     </person>
     <person sex="male">
         <name>
