@@ -8,6 +8,9 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class Ex1 {
     public static void main(String... args) {
@@ -29,6 +32,7 @@ public class Ex1 {
         PatternNode root = new PatternNode.Builder("people").build();
         PatternNode person = new PatternNode.Builder(root)
                 .makeWildcardNode()
+                .makeReturnResult()
                 .build();
         PatternNode email = new PatternNode.Builder("email", person)
                 .makeOptional()
@@ -66,15 +70,15 @@ public class Ex1 {
         System.out.println(eval.getRootMatch());
 
         // print result tuples
-        /*
-        Table<Integer, String, Integer> tuples = new ResultTupleCalculator(eval.getRootMatch()).calculate();
-        final SortedSet<String> columns = new TreeSet<>(tuples.columnKeySet());
+
+        ResultTupleCalculator.ResultList resultList = new ResultTupleCalculator(eval.getRootMatch()).calculate();
+        final SortedSet<String> columns = new TreeSet<>(resultList.getColumns());
         for (String column : columns) {
             System.out.print(column);
             System.out.print("\t");
         }
         System.out.println();
-        for (Map<String, Integer> row : tuples.rowMap().values()) {
+        for (Map<String, Integer> row : resultList.getResults()) {
             for (String column : columns) {
                 final Integer value = row.get(column);
                 System.out.print((value == null ? "_" : value));
@@ -82,7 +86,7 @@ public class Ex1 {
             }
             System.out.println();
         }
-        */
+
 
         // print result xml
         ResultXMLCalculator.printXmlNode(eval.getRootMatch(), 0);

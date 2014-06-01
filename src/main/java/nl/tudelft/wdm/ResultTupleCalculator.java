@@ -6,7 +6,7 @@ import com.google.common.collect.HashBiMap;
 import java.util.*;
 
 public class ResultTupleCalculator {
-    private final Match m;
+    private final Match rootMatch;
     private final boolean returnAll;
     private int currentWildCardNumber = 1;
     /**
@@ -14,42 +14,44 @@ public class ResultTupleCalculator {
      */
     private BiMap<PatternNode, String> columnNamesMap = HashBiMap.create();
 
-    public ResultTupleCalculator(Match m) {
-        this(m, false);
+    public ResultTupleCalculator(Match rootMatch) {
+        this(rootMatch, false);
     }
 
     /**
      * @param returnAll if true, will ignore the returnValue setting of PatternNodes and will return everything
      */
-    public ResultTupleCalculator(Match m, boolean returnAll) {
-        this.m = m;
+    public ResultTupleCalculator(Match rootMatch, boolean returnAll) {
+        this.rootMatch = rootMatch;
         this.returnAll = returnAll;
     }
 
-    /**
-     * Returns the results as a table with an arbitrary integer as row number, PatternNode name as column, and preorder number as value.
-     * If a node is optional it will not have a mapping (table.get() will return null)
-     * Wildcards will be named "*1", "*2", ... ,"*n"
-     */
+
     public ResultList calculate() {
-        return calculate(m);
+        return calculate(rootMatch);
     }
 
-    /**
-     * Process the matches recursively
-     * On a high-level, this works as follows by going through the match tree depth-first:
-     * - Process a match by remembering it's (columnName,PreorderNumber)
-     * - If the match has element children, process them
-     * - Otherwise if the match is a leaf: Write a row to the table. The row contains the (columnName,PreOrderNumber) of the current match and all matches up the tree
-     * - When a match is processed, forget the (columnName,PreOrderNumber) of that match
-     */
     private ResultList calculate(Match currentMatch) {
         if (!currentMatch.hasChildren()) {
             // Leaf element
             return new ResultList().addElement(getColumnName(currentMatch), currentMatch.getPre());
         } else {
-            // TODO;
-            return null;
+            List<ResultList> currentMatchChildResults = new ArrayList<>();
+            for(PatternNode childP : currentMatch.getChildren().keySet()) {
+                Collection<Match> childMatches = currentMatch.getChildren().get(childP);
+                ResultList childResults = new ResultList();
+                // Take the union of all the child matches for this pattern node
+                for(Match childM : childMatches) {
+                    childResults = childResults.union(calculate(childM));
+                }
+                currentMatchChildResults.add(childResults);
+            }
+            // Flatten the match child results by taking the carthesian product
+            ResultList currentMResults = currentMatchChildResults.get(0);
+            for(int i=1; i < currentMatchChildResults.size(); i++) {
+                currentMResults = currentMResults.merge(currentMatchChildResults.get(i));
+            }
+            return currentMResults.addElement(getColumnName(currentMatch), currentMatch.getPre());
         }
     }
 
@@ -74,7 +76,7 @@ public class ResultTupleCalculator {
     /**
      * Represents the result tuples as a list of maps
      */
-    private static class ResultList {
+    public static class ResultList {
 
         /**
          * The columns of the result table/tuples
@@ -85,16 +87,16 @@ public class ResultTupleCalculator {
          */
         final List<Map<String, Integer>> results = new ArrayList<>();
 
-        /**
-         * True iff this resultslist is only a single tuple
-         */
-        private boolean isSingleTuple() {
-            final int size = results.size();
-            assert size != 0;
-            return size == 1;
+        public Set<String> getColumns() {
+            return columns;
+        }
+
+        public List<Map<String, Integer>> getResults() {
+            return results;
         }
 
         /**
+
          * Add an element pre-order number to all tuples
          */
         public ResultList addElement(String columnName, Integer preordernumber) {
@@ -119,32 +121,36 @@ public class ResultTupleCalculator {
         }
 
         /**
-         * Merge two ResultLists, potentially altering them
-         * Returns a merged ResultList
+         * Merge two ResultLists by taking their cartesian product
          */
-        public ResultList merge(ResultList other) {
-            // There are basically
-            // Keep conflicting columns in here
-            // A conflict exists if both ResultLists contain the same columns. This means a carthesian product of both lists will have to be taken
-            List<String> conflicts = new ArrayList<>();
-            List<String> nonconflicts = new ArrayList<>();
-            // First determine conflicts
-            for (String column : other.columns) {
-                if (columns.contains(column)) {
-                    conflicts.add(column);
-                } else {
-                    nonconflicts.add(column);
+        public ResultList merge(ResultList that) {
+            ResultList product = new ResultList();
+            // Merge the two column sets
+            product.columns.addAll(this.columns);
+            product.columns.addAll(that.columns);
+            // Check if there are any conflicts, if so we'll need make every tuple into 2
+            boolean conflicts = false;
+            for(String column : that.columns) {
+                if(this.columns.contains(column)) {
+                    conflicts = true;
+                    break;
                 }
             }
-            // Merge the nonconflicting columns by copying
-            for (Map<String, Integer> thisTuple : this.results) {
-                for (Map<String, Integer> otherTuple : other.results) {
-                    for (String column : nonconflicts) {
-
+            // Now for every this row, combine it with the other rows
+            for(Map<String, Integer> thisTuple : this.results) {
+                for(Map<String, Integer> thatTuple : that.results) {
+                    Map<String, Integer> newTuple = new HashMap<>(thisTuple);
+                    newTuple.putAll(thatTuple);
+                    product.results.add(newTuple);
+                    // If we have conflicts, now make the other tuple
+                    if(conflicts) {
+                        newTuple = new HashMap<>(thatTuple);
+                        newTuple.putAll(thisTuple);
+                        product.results.add(newTuple);
                     }
                 }
             }
-            return this;
+            return product;
         }
     }
 }
