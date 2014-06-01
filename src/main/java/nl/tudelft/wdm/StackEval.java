@@ -20,6 +20,7 @@ public class StackEval extends DefaultHandler {
      * pre number of the last element which has started:
      */
     private int currentPre = 0;
+    private int currentElementPre = 0;
     private Match rootMatch;
     private Match current;
 
@@ -34,6 +35,7 @@ public class StackEval extends DefaultHandler {
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         currentPre++;
+        currentElementPre = currentPre;
         if (rootMatch == null) {
             if (qName.equals(root.getName()) || root.getName().equals("*")) {
                 addMatch(qName, root, null);
@@ -173,7 +175,7 @@ public class StackEval extends DefaultHandler {
 
     @Override
     public void characters(char[] ch, int start, int length) throws SAXException {
-        if (currentPre == openNodesPreNumbers.peek()) {
+        if (currentElementPre == openNodesPreNumbers.peek()) {
             current.setTextValue(new String(Arrays.copyOfRange(ch, start, start+length)));
         }
     }
