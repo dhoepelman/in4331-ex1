@@ -19,8 +19,9 @@
             <last>Lang</last>
         </name>
     </person>
-    <person>
-        <email type="home">a@home</email>
+    <person sex="unkown">
+        <email type="home">a@home
+        </ema;il>
         <email type="work">a@work</email>
         <name>
             <first>Al</first>

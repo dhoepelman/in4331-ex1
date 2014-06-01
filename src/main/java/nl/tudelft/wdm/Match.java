@@ -48,6 +48,10 @@ public class Match {
         return children;
     }
 
+    public boolean hasChildren() {
+        return getChildren().size() > 0;
+    }
+
     public void addChild(PatternNode pn, Match m) {
         children.put(pn, m);
     }
