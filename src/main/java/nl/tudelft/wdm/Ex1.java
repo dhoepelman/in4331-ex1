@@ -39,6 +39,7 @@ public class Ex1 {
                 .makeReturnResult()
                 .build();
         PatternNode name = new PatternNode.Builder("name", person)
+                .makeReturnResult()
                 .build();
         PatternNode fname = new PatternNode.Builder("first", name)
                 .makeOptional()
@@ -71,18 +72,25 @@ public class Ex1 {
 
         // print result tuples
 
-        ResultTupleCalculator.ResultList resultList = new ResultTupleCalculator(eval.getRootMatch()).calculate();
+        ResultTupleCalculator resultTupleCalculator = new ResultTupleCalculator(eval.getRootMatch());
+        ResultTupleCalculator.ResultList resultList = resultTupleCalculator.calculate();
         final SortedSet<String> columns = new TreeSet<>(resultList.getColumns());
         for (String column : columns) {
-            System.out.print(column);
-            System.out.print("\t");
+            // TODO: Move this check to a better position, or even better just don't include non return result values in the result tuples
+            if(resultTupleCalculator.getColumnNamesMap().inverse().get(column).isReturnResult()) {
+                System.out.print(column);
+                System.out.print("\t");
+            }
         }
         System.out.println();
         for (Map<String, Integer> row : resultList.getResults()) {
             for (String column : columns) {
-                final Integer value = row.get(column);
-                System.out.print((value == null ? "_" : value));
-                System.out.print("\t");
+                // TODO: Move this check to a better position, or even better just don't include non return result values in the result tuples
+                if(resultTupleCalculator.getColumnNamesMap().inverse().get(column).isReturnResult()) {
+                    final Integer value = row.get(column);
+                    System.out.print((value == null ? "_" : value));
+                    System.out.print("\t");
+                }
             }
             System.out.println();
         }
@@ -90,7 +98,6 @@ public class Ex1 {
 
         // print result xml
         ResultXMLCalculator.printXmlNode(eval.getRootMatch(), 0);
-
     }
 
 }

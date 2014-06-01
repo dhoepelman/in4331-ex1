@@ -7,23 +7,18 @@ import java.util.*;
 
 public class ResultTupleCalculator {
     private final Match rootMatch;
-    private final boolean returnAll;
-    private int currentWildCardNumber = 1;
+
     /**
      * Contains mappings from patternnodes to a unique string identifier
      */
     private BiMap<PatternNode, String> columnNamesMap = HashBiMap.create();
 
-    public ResultTupleCalculator(Match rootMatch) {
-        this(rootMatch, false);
+    public BiMap<PatternNode, String> getColumnNamesMap() {
+        return columnNamesMap;
     }
 
-    /**
-     * @param returnAll if true, will ignore the returnValue setting of PatternNodes and will return everything
-     */
-    public ResultTupleCalculator(Match rootMatch, boolean returnAll) {
+    public ResultTupleCalculator(Match rootMatch) {
         this.rootMatch = rootMatch;
-        this.returnAll = returnAll;
     }
 
 
@@ -51,7 +46,8 @@ public class ResultTupleCalculator {
             for(int i=1; i < currentMatchChildResults.size(); i++) {
                 currentMResults = currentMResults.merge(currentMatchChildResults.get(i));
             }
-            return currentMResults.addElement(getColumnName(currentMatch), currentMatch.getPre());
+            currentMResults = currentMResults.addElement(getColumnName(currentMatch), currentMatch.getPre());
+            return currentMResults;
         }
     }
 
