@@ -67,7 +67,7 @@ public class Ex1 {
             return;
         }
 
-        System.out.println("Completed successfully (niet hopen)");
+        System.out.println("Completed successfully");
         System.out.println(eval.getRootMatch());
 
         // print result tuples
@@ -76,8 +76,7 @@ public class Ex1 {
         ResultTupleCalculator.ResultList resultList = resultTupleCalculator.calculate();
         final SortedSet<String> columns = new TreeSet<>(resultList.getColumns());
         for (String column : columns) {
-            // TODO: Move this check to a better position, or even better just don't include non return result values in the result tuples
-            if(resultTupleCalculator.getColumnNamesMap().inverse().get(column).isReturnResult()) {
+            if (resultTupleCalculator.getColumnNamesMap().inverse().get(column).isReturnResult()) {
                 System.out.print(column);
                 System.out.print("\t");
             }
@@ -85,8 +84,7 @@ public class Ex1 {
         System.out.println();
         for (Map<String, Integer> row : resultList.getResults()) {
             for (String column : columns) {
-                // TODO: Move this check to a better position, or even better just don't include non return result values in the result tuples
-                if(resultTupleCalculator.getColumnNamesMap().inverse().get(column).isReturnResult()) {
+                if (resultTupleCalculator.getColumnNamesMap().inverse().get(column).isReturnResult()) {
                     final Integer value = row.get(column);
                     System.out.print((value == null ? "_" : value));
                     System.out.print("\t");
