@@ -13,14 +13,13 @@ public class ResultTupleCalculator {
      */
     private BiMap<PatternNode, String> columnNamesMap = HashBiMap.create();
 
-    public BiMap<PatternNode, String> getColumnNamesMap() {
-        return columnNamesMap;
-    }
-
     public ResultTupleCalculator(Match rootMatch) {
         this.rootMatch = rootMatch;
     }
 
+    public BiMap<PatternNode, String> getColumnNamesMap() {
+        return columnNamesMap;
+    }
 
     public ResultList calculate() {
         return calculate(rootMatch);
