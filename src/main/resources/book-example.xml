@@ -13,18 +13,24 @@
             <!--<last>Potter</last>-->
         </name>
     </person>
+    <person sex="female">
+        <name>
+            <first>Janien</first>
+        </name>
+    </person>
     <person sex="male">
         <name>
             <first>Bob</first>
             <last>Lang</last>
         </name>
     </person>
-    <person sex="unknown">
-    <email type="home">a@home</email>
+    <person>
+        <email type="home">a@home</email>
         <email type="work">a@work</email>
         <name>
             <first>Al</first>
             <last>Hart</last>
         </name>
-    </person>-
+    </person>
+    -
 </people>
