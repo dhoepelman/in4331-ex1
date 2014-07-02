@@ -73,6 +73,9 @@ public class StackEval extends DefaultHandler {
         TPEStack stack = node.getStack();
         if ((qName.equals(node.getName()) || node.getName().equals("*"))
                 && (node.isRoot() || stack.getParent().top().getStatus() == Match.STATUS.OPEN)) {
+            if (node.isAttribute() && node.getValuePredicate() != null && !node.getValuePredicate().equals(value)) {
+                return;
+            }
             Match m = new Match(currentPre, (node.isRoot() ? null : stack.getParent().top()), stack, qName);
             if (!node.isAttribute()) {
                 current = m;

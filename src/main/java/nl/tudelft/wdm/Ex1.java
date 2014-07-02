@@ -28,27 +28,7 @@ public class Ex1 {
             return;
         }
 
-        // Define pattern here
-        PatternNode root = new PatternNode.Builder("people").build();
-        PatternNode person = new PatternNode.Builder(root)
-                .makeWildcardNode()
-                .makeReturnResult()
-                .build();
-        PatternNode email = new PatternNode.Builder("email", person)
-                .makeOptional()
-                .makeReturnResult()
-                .build();
-        PatternNode name = new PatternNode.Builder("name", person)
-                .makeReturnResult()
-                .build();
-        PatternNode fname = new PatternNode.Builder("first", name)
-                .makeOptional()
-                .makeReturnResult()
-                .build();
-        PatternNode lname = new PatternNode.Builder("last", name)
-                .makeOptional()
-                .makeReturnResult()
-                .build();
+        PatternNode root = example2();
 
         StackEval eval = new StackEval(root);
 
@@ -68,10 +48,14 @@ public class Ex1 {
         }
 
         System.out.println("Completed successfully");
+
+        System.out.println();
+        System.out.println("Printing matches:");
         System.out.println(eval.getRootMatch());
 
         // print result tuples
-
+        System.out.println();
+        System.out.println("Printing tuples:");
         ResultTupleCalculator resultTupleCalculator = new ResultTupleCalculator(eval.getRootMatch());
         ResultTupleCalculator.ResultList resultList = resultTupleCalculator.calculate();
         final SortedSet<String> columns = new TreeSet<>(resultList.getColumns());
@@ -95,7 +79,99 @@ public class Ex1 {
 
 
         // print result xml
+        System.out.println();
+        System.out.println("Printing XML:");
         ResultXMLCalculator.printXmlNode(eval.getRootMatch(), 0);
+    }
+
+    private static PatternNode example1 () {
+        // Define pattern here
+        PatternNode root = new PatternNode.Builder("people").build();
+        PatternNode person = new PatternNode.Builder("person", root)
+                .makeReturnResult()
+                .build();
+        PatternNode id = new PatternNode.Builder("id", person)
+                .makeAttributeNode()
+                .makeOptional()
+                .makeReturnResult()
+                .build();
+
+        return root;
+    }
+
+    private static PatternNode example2() {
+        // Define pattern here
+        PatternNode root = new PatternNode.Builder("people")
+                .build();
+        PatternNode person = new PatternNode.Builder("person", root)
+                .makeReturnResult()
+                .build();
+        PatternNode id = new PatternNode.Builder("id", person)
+                .makeAttributeNode()
+                .makeOptional()
+                .makeReturnResult()
+                .build();
+        PatternNode sex = new PatternNode.Builder("sex", person)
+                .makeAttributeNode()
+                .setValuePredicate("female")
+                .makeReturnResult()
+                .build();
+
+        return root;
+    }
+
+    private static PatternNode example3() {
+        // Define pattern here
+        PatternNode root = new PatternNode.Builder("people")
+                .build();
+        PatternNode person = new PatternNode.Builder("person", root)
+                .makeReturnResult()
+                .build();
+        PatternNode id = new PatternNode.Builder("id", person)
+                .makeAttributeNode()
+                .makeOptional()
+                .makeReturnResult()
+                .build();
+        PatternNode wildcardAttr = new PatternNode.Builder("*", person)
+                .makeAttributeNode()
+                .makeOptional()
+                .makeReturnResult()
+                .build();
+        PatternNode wildcardElem = new PatternNode.Builder("*", person)
+                .makeOptional()
+                .makeReturnResult()
+                .build();
+
+        return root;
+    }
+
+    private static PatternNode example4() {
+        // Define pattern here
+        PatternNode root = new PatternNode.Builder("people").build();
+        PatternNode person = new PatternNode.Builder("person", root)
+                .build();
+        PatternNode id = new PatternNode.Builder("id", person)
+                .makeAttributeNode()
+                .makeOptional()
+                .makeReturnResult()
+                .build();
+        PatternNode email = new PatternNode.Builder("email", person)
+                .makeOptional()
+                .makeReturnResult()
+                .build();
+        PatternNode name = new PatternNode.Builder("name", person)
+                .makeReturnResult()
+                .build();
+        PatternNode fname = new PatternNode.Builder("first", name)
+                .makeOptional()
+                .makeReturnResult()
+                .build();
+        PatternNode lname = new PatternNode.Builder("last", name)
+                .makeOptional()
+                .makeReturnResult()
+                .build();
+
+        return root;
     }
 
 }
