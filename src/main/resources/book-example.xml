@@ -1,6 +1,6 @@
 <people>
-    <person sex="female">
-        <email>m@home</email>
+    <person sex="female" id="1">
+    <email>m@home</email>
         <name>
             <first>Mary</first>
             <last>Jones</last>
@@ -13,24 +13,23 @@
             <!--<last>Potter</last>-->
         </name>
     </person>
-    <person sex="female">
-        <name>
+    <person sex="female" id="2">
+    <name>
             <first>Janien</first>
         </name>
     </person>
-    <person sex="male">
-        <name>
+    <person sex="male" id="3">
+    <name>
             <first>Bob</first>
             <last>Lang</last>
         </name>
     </person>
-    <person>
-        <email type="home">a@home</email>
+    <person id="4">
+    <email type="home">a@home</email>
         <email type="work">a@work</email>
         <name>
             <first>Al</first>
             <last>Hart</last>
         </name>
     </person>
-    -
 </people>
