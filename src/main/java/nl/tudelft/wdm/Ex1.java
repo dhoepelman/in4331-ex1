@@ -28,7 +28,7 @@ public class Ex1 {
             return;
         }
 
-        PatternNode root = example2();
+        PatternNode root = example4();
 
         StackEval eval = new StackEval(root);
 
@@ -125,11 +125,6 @@ public class Ex1 {
         PatternNode root = new PatternNode.Builder("people")
                 .build();
         PatternNode person = new PatternNode.Builder("person", root)
-                .makeReturnResult()
-                .build();
-        PatternNode id = new PatternNode.Builder("id", person)
-                .makeAttributeNode()
-                .makeOptional()
                 .makeReturnResult()
                 .build();
         PatternNode wildcardAttr = new PatternNode.Builder("*", person)

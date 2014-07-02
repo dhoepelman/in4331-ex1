@@ -17,7 +17,7 @@ public class ResultXMLCalculator {
                 }
             }
             System.out.print(">\n");
-            if (match.getTextValue() != null) {
+            if (match.getTextValue() != null && !match.getTextValue().trim().equals("")) {
                 printIndentation(depth + 1);
                 System.out.print(match.getTextValue() + "\n");
             }
